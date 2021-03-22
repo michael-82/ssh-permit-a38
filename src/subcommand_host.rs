@@ -70,7 +70,7 @@ pub fn list(db: &mut Database, hostname_filter: &str, print_raw: bool) {
             println!("* {}", group);
         }
 
-        println!("");
+        println!();
     }
 }
 

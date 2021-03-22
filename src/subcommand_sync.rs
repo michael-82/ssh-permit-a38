@@ -15,12 +15,12 @@ use std::path::Path;
 use std::str;
 
 fn userauth_agent(sess: &mut Session, ssh_user: &str) -> Result<bool, Box<Error>> {
-    let mut agent = try!(sess.agent());
-    try!(agent.connect());
+    let mut agent = sess.agent()?;
+    agent.connect()?;
     agent.list_identities().unwrap();
 
     for identity in agent.identities() {
-        let identity = try!(identity);
+        let identity = identity?;
         if agent.userauth(&ssh_user, &identity).is_ok() {
             return Ok(true);
         }
@@ -46,9 +46,9 @@ pub fn sync(db: &mut Database, password_auth: bool, yes_authorized_keys_prompt: 
             continue;
         }
 
-        println!("");
+        println!();
         cli_flow::infoln(&format!("# Syncing host {}...", host.hostname));
-        println!("");
+        println!();
 
         syned_sth = true;
 
@@ -208,7 +208,7 @@ pub fn sync(db: &mut Database, password_auth: bool, yes_authorized_keys_prompt: 
                 if r_read.is_ok() {
                     remote_authorized_keys_file_default = format!(
                         "{}/.ssh/authorized_keys",
-                        home.trim_right().trim_left().to_owned()
+                        home.trim_end().trim_start().to_owned()
                     );
                     channel.wait_close().is_ok();
                 }
@@ -310,7 +310,7 @@ pub fn sync(db: &mut Database, password_auth: bool, yes_authorized_keys_prompt: 
         let Changeset { diffs, .. } =
             Changeset::new(&authorized_keys_remote_str, &authorized_keys_sync_str, "\n");
 
-        println!("");
+        println!();
         for i in 0..diffs.len() {
             match diffs[i] {
                 Difference::Same(ref x) => {

@@ -23,7 +23,7 @@ pub fn remove(db: &mut Database, group_id: &str) {
         cli_flow::errorln(&format!("Group {} not known", group_id));
     }
 
-    // delete grouo
+    // delete group
     db.user_groups.retain(|u| u.group_id != group_id);
 
     // delete user from user_groups.members
@@ -57,7 +57,7 @@ pub fn list(db: &mut Database, group_filter: &str, print_raw: bool) {
         }
     }
 
-    println!("");
+    println!();
 }
 
 pub fn grant(db: &mut Database, group_id: &str, hostname: &str) {
